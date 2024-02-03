@@ -33,7 +33,7 @@ Chess::~Chess() {
 void Chess::initBoard() {
     for (int i = 0; i < NUM_SQUARES; ++i) {
         for (int j = 0; j < NUM_SQUARES; ++j) {
-            board[i][j] = (Rectangle){ i * SQUARE_SIZE, j * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE };
+            board[i][j].rectangle = (Rectangle){ i * SQUARE_SIZE, j * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE };
         }
     }
 }
@@ -70,35 +70,54 @@ void Chess::initPieces() {
 
     // Pawns
     for (int i = 0; i < 8; ++i) {
-        b_pieces.emplace_back(1, PAWN, &textures.b_pawn, (Vector2){i*SQUARE_SIZE, SQUARE_SIZE });
-        w_pieces.emplace_back(0, PAWN, &textures.w_pawn, (Vector2){i*SQUARE_SIZE, 6*SQUARE_SIZE });
+        b_pieces.emplace_back(1, PAWN, &textures.b_pawn);
+        w_pieces.emplace_back(0, PAWN, &textures.w_pawn);
+
+        board[i][1].piece = &b_pieces[i];
+        board[i][6].piece = &w_pieces[i];
     }
 
     // Rooks
-    b_pieces.emplace_back(1, ROOK, &textures.b_rook, (Vector2){0,             0 });
-    w_pieces.emplace_back(0, ROOK, &textures.w_rook, (Vector2){0,             7*SQUARE_SIZE });
-    b_pieces.emplace_back(1, ROOK, &textures.b_rook, (Vector2){7*SQUARE_SIZE, 0 });
-    w_pieces.emplace_back(0, ROOK, &textures.w_rook, (Vector2){7*SQUARE_SIZE, 7*SQUARE_SIZE });
+    b_pieces.emplace_back(1, ROOK, &textures.b_rook);
+    board[0][0].piece = &b_pieces.back();
+    w_pieces.emplace_back(0, ROOK, &textures.w_rook);
+    board[0][7].piece = &w_pieces.back();
+    b_pieces.emplace_back(1, ROOK, &textures.b_rook);
+    board[7][0].piece = &b_pieces.back();
+    w_pieces.emplace_back(0, ROOK, &textures.w_rook);
+    board[7][7].piece = &w_pieces.back();
 
     // Knights
-    b_pieces.emplace_back(1, KNIGHT, &textures.b_knight, (Vector2){1*SQUARE_SIZE, 0 });
-    w_pieces.emplace_back(0, KNIGHT, &textures.w_knight, (Vector2){1*SQUARE_SIZE, 7*SQUARE_SIZE });
-    b_pieces.emplace_back(1, KNIGHT, &textures.b_knight, (Vector2){6*SQUARE_SIZE, 0 });
-    w_pieces.emplace_back(0, KNIGHT, &textures.w_knight, (Vector2){6*SQUARE_SIZE, 7*SQUARE_SIZE });
+    b_pieces.emplace_back(1, KNIGHT, &textures.b_knight);
+    board[1][0].piece = &b_pieces.back();
+    w_pieces.emplace_back(0, KNIGHT, &textures.w_knight);
+    board[1][7].piece = &w_pieces.back();
+    b_pieces.emplace_back(1, KNIGHT, &textures.b_knight);
+    board[6][0].piece = &b_pieces.back();
+    w_pieces.emplace_back(0, KNIGHT, &textures.w_knight);
+    board[6][7].piece = &w_pieces.back();
 
     // Bishops
-    b_pieces.emplace_back(1, BISHOP, &textures.b_bishop, (Vector2){2*SQUARE_SIZE, 0 });
-    w_pieces.emplace_back(0, BISHOP, &textures.w_bishop, (Vector2){2*SQUARE_SIZE, 7*SQUARE_SIZE });
-    b_pieces.emplace_back(1, BISHOP, &textures.b_bishop, (Vector2){5*SQUARE_SIZE, 0 });
-    w_pieces.emplace_back(0, BISHOP, &textures.w_bishop, (Vector2){5*SQUARE_SIZE, 7*SQUARE_SIZE });
+    b_pieces.emplace_back(1, BISHOP, &textures.b_bishop);
+    board[2][0].piece = &b_pieces.back();
+    w_pieces.emplace_back(0, BISHOP, &textures.w_bishop);
+    board[2][7].piece = &w_pieces.back();
+    b_pieces.emplace_back(1, BISHOP, &textures.b_bishop);
+    board[5][0].piece = &b_pieces.back();
+    w_pieces.emplace_back(0, BISHOP, &textures.w_bishop);
+    board[5][7].piece = &w_pieces.back();
 
     // Queens
-    b_pieces.emplace_back(1, QUEEN, &textures.b_queen, (Vector2){4*SQUARE_SIZE, 0});
-    w_pieces.emplace_back(0, QUEEN, &textures.w_queen, (Vector2){3*SQUARE_SIZE, 7*SQUARE_SIZE});
+    b_pieces.emplace_back(1, QUEEN, &textures.b_queen);
+    board[3][0].piece = &b_pieces.back();
+    w_pieces.emplace_back(0, QUEEN, &textures.w_queen);
+    board[4][7].piece = &w_pieces.back();
 
     // Kings
-    b_pieces.emplace_back(1, KING, &textures.b_king, (Vector2){3*SQUARE_SIZE, 0});
-    w_pieces.emplace_back(0, KING, &textures.w_king, (Vector2){4*SQUARE_SIZE, 7*SQUARE_SIZE});
+    b_pieces.emplace_back(1, KING, &textures.b_king);
+    board[4][0].piece = &b_pieces.back();
+    w_pieces.emplace_back(0, KING, &textures.w_king);
+    board[3][7].piece = &w_pieces.back();
 }
 
 void Chess::play() {
@@ -113,9 +132,15 @@ void Chess::update() {
 
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
-            if (CheckCollisionPointRec(mousePosition, board[i][j]) && IsMouseButtonDown(MOUSE_BUTTON_LEFT) && pieceMap[j][i] != 0) {
-                selectedSquare[0] = i;
-                selectedSquare[1] = j;
+            if (CheckCollisionPointRec(mousePosition, board[i][j].rectangle) && IsMouseButtonDown(MOUSE_BUTTON_LEFT) && board[j][i].piece) {
+                std::vector<int> pos = {i, j};
+                if (board[selectedSquare[0]][selectedSquare[1]].piece && !board[i][j].piece && isValidMove(pos, board[i][j].piece->type)) {
+                    board[i][j].piece = board[selectedSquare[0]][selectedSquare[1]].piece;
+                    board[selectedSquare[0]][selectedSquare[1]].piece = nullptr;
+                } else {
+                    selectedSquare[0] = i;
+                    selectedSquare[1] = j;
+                }
             }
         }
     }
@@ -128,17 +153,14 @@ void Chess::draw() {
         // Draw board
         for (int i = 0; i < 8; ++i) {
             for (int j = 0; j < 8; ++j) {
-                DrawRectangleRec(board[i][j], (i + j) % 2 == 0 ? WHITE : BLACK);
+                DrawRectangleRec(board[i][j].rectangle, (i + j) % 2 == 0 ? WHITE : BLACK);
                 if (i == selectedSquare[0] && j == selectedSquare[1]) {
-                    DrawRectangleLinesEx(board[i][j], 10.0f, BLUE);
+                    DrawRectangleLinesEx(board[i][j].rectangle, 10.0f, BLUE);
+                }
+                if (board[i][j].piece) {
+                    board[i][j].piece->draw(i * SQUARE_SIZE, j * SQUARE_SIZE);
                 }
             }
-        }
-
-        // Draw pieces
-        for (int i = 0; i < 16; ++i) {
-            if (b_pieces[i].isInGame) b_pieces[i].draw();
-            if (w_pieces[i].isInGame) w_pieces[i].draw();
         }
     } EndDrawing();
 }
@@ -166,21 +188,21 @@ bool Chess::checkPath(std::vector<int> pos) {
     if (pos[0] == selectedSquare[0]) {
         if (pos[1] < selectedSquare[1]) {
             for (int i = pos[1]; i < selectedSquare[1]; i++) {
-                if (pieceMap[pos[0]][i] != 0) return false;
+                if (board[pos[0]][i].piece) return false;
             }
         } else {
             for (int i = selectedSquare[1]; i < pos[1]; i++) {
-                if (pieceMap[pos[0]][i] != 0) return false;
+                if (board[pos[0]][i].piece) return false;
             }
         }
     } else if (pos[1] == selectedSquare[1]) {
         if (pos[0] < selectedSquare[0]) {
             for (int i = pos[0]; i < selectedSquare[0]; i++) {
-                if (pieceMap[i][pos[1]] != 0) return false;
+                if (board[i][pos[1]].piece) return false;
             }
         } else {
             for (int i = selectedSquare[0]; i < pos[0]; i++) {
-                if (pieceMap[i][pos[1]] != 0) return false;
+                if (board[i][pos[1]].piece) return false;
             }
         }
     } else {

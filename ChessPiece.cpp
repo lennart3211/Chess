@@ -4,10 +4,9 @@
 
 #include "ChessPiece.h"
 
-ChessPiece::ChessPiece(int color, ChessPieceType type, Texture2D *texture, Vector2 position_f) : color(color), texture(texture), position_f(position_f) {
-    isInGame = true;
+ChessPiece::ChessPiece(int color, ChessPieceType type, Texture2D *texture) : color(color), texture(texture) {
 }
 
-void ChessPiece::draw() {
-    if (texture != nullptr && isInGame) DrawTexture(*texture, position_f.x, position_f.y, WHITE);
+void ChessPiece::draw(float x, float y) {
+    if (texture != nullptr) DrawTexture(*texture, x, y, WHITE);
 }

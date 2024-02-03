@@ -8,6 +8,7 @@
 #include <raylib.h>
 #include <vector>
 #include "ChessPiece.h"
+#include "ChessSquare.h"
 
 typedef struct {
     Texture2D b_pawn;
@@ -38,7 +39,7 @@ private:
 
     bool running;
 
-    Rectangle board[8][8];
+    ChessSquare board[8][8];
     std::vector<std::vector<int>> pieceMap;
     Textures textures;
     Vector2 mousePosition;

@@ -7,6 +7,8 @@ add_executable(Chess main.cpp
         Chess.h
         Chess.cpp
         ChessPiece.h
-        ChessPiece.cpp)
+        ChessPiece.cpp
+        ChessSquare.h
+        ChessSquare.cpp)
 
 target_link_libraries(Chess raylib winmm)

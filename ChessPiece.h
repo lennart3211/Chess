@@ -18,18 +18,15 @@ enum ChessPieceType {
 
 class ChessPiece {
 public:
-    ChessPiece(int color, ChessPieceType type, Texture2D *texture, Vector2 position_f);
-    void draw();
+    ChessPiece(int color, ChessPieceType type, Texture2D *texture);
+    void draw(float x, float y);
 
     int color;
     ChessPieceType type;
-    bool isInGame;
     bool isSelected;
 
 private:
     Texture2D *texture;
-    Vector2 position_f;
-    int position[2];
 };
 
 
