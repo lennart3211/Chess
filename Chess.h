@@ -42,7 +42,7 @@ private:
     std::vector<std::vector<int>> pieceMap;
     Textures textures;
     Vector2 mousePosition;
-    int selectedSquare[2];
+    std::vector<int> selectedSquare;
 
     std::vector<ChessPiece> b_pieces;
     std::vector<ChessPiece> w_pieces;
@@ -51,6 +51,8 @@ private:
     void initPieces();
     void update();
     void draw();
+    bool isValidMove(std::vector<int> pos, ChessPieceType type);
+    bool checkPath(std::vector<int> pos);
 };
 
 

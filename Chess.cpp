@@ -2,6 +2,7 @@
 // Created by Lennart Strempfer on 02/02/2024.
 //
 
+#include <cmath>
 #include "Chess.h"
 
 Chess::Chess() {
@@ -9,6 +10,7 @@ Chess::Chess() {
     SetTargetFPS(60);
     initBoard();
     initPieces();
+    selectedSquare = {4, 4}; // Needs to have value at all times
 }
 
 Chess::~Chess() {
@@ -139,5 +141,50 @@ void Chess::draw() {
             if (w_pieces[i].isInGame) w_pieces[i].draw();
         }
     } EndDrawing();
+}
 
+bool Chess::isValidMove(std::vector<int> pos, ChessPieceType type) {
+    switch (type) {
+        case PAWN:
+            return pos[0] == selectedSquare[0] && pieceMap[selectedSquare[0]][selectedSquare[1]] > 0 ? selectedSquare[0] == 2 ? selectedSquare[1] - pos[1] == -2 || selectedSquare[1] - pos[1] == -1 : selectedSquare[1] - pos[1] == -1 : selectedSquare[0] == 6 ? selectedSquare[1] - pos[1] == 2 || selectedSquare[1] - pos[1] == 1 : selectedSquare[1] - pos[1] == 1;
+        case ROOK:
+            return checkPath(pos) && pos[0] == selectedSquare[0] ? pos[1] != selectedSquare[1] : pos[1] == selectedSquare[1];
+        case KNIGHT:
+            return std::abs(pos[0] - selectedSquare[0]) == 1 ? std::abs(pos[1] - selectedSquare[1]) == 3 : std::abs(pos[0] - selectedSquare[0]) == 3 && std::abs(pos[1] - selectedSquare[1]) == 1;
+        case BISHOP:
+            return std::abs(pos[0] - selectedSquare[0]) == std::abs(pos[1] - selectedSquare[1]) && checkPath(pos);
+        case QUEEN:
+            return checkPath(pos) && pos[0] == selectedSquare[0] ? pos[1] != selectedSquare[1] : pos[1] == selectedSquare[1] || std::abs(pos[0] - selectedSquare[0]) == std::abs(pos[1] - selectedSquare[1]);
+        case KING:
+            return pos[0] == selectedSquare[0] ? std::abs(pos[1] - selectedSquare[1]) == 1 : std::abs(pos[0] - selectedSquare[0]) == 1 && std::abs(pos[1] - selectedSquare[1]) == 1;
+        default:
+            return true;
+    }
+}
+
+bool Chess::checkPath(std::vector<int> pos) {
+    if (pos[0] == selectedSquare[0]) {
+        if (pos[1] < selectedSquare[1]) {
+            for (int i = pos[1]; i < selectedSquare[1]; i++) {
+                if (pieceMap[pos[0]][i] != 0) return false;
+            }
+        } else {
+            for (int i = selectedSquare[1]; i < pos[1]; i++) {
+                if (pieceMap[pos[0]][i] != 0) return false;
+            }
+        }
+    } else if (pos[1] == selectedSquare[1]) {
+        if (pos[0] < selectedSquare[0]) {
+            for (int i = pos[0]; i < selectedSquare[0]; i++) {
+                if (pieceMap[i][pos[1]] != 0) return false;
+            }
+        } else {
+            for (int i = selectedSquare[0]; i < pos[0]; i++) {
+                if (pieceMap[i][pos[1]] != 0) return false;
+            }
+        }
+    } else {
+        // diagonal
+    }
+    return true;
 }
