@@ -17,3 +17,10 @@
 12	324	7287058139213038	CMakeFiles/Chess.dir/main.cpp.obj	bddd8afb012850b5
 6	1931	7287061825665844	CMakeFiles/Chess.dir/Chess.cpp.obj	48fe4209867cac4c
 1933	2547	7287061831935519	Chess.exe	3567fec0bfe0f0b
+15	303	7287072814184104	CMakeFiles/Chess.dir/ChessSquare.cpp.obj	f59d9d6b85e2695c
+8	333	7287072814487214	CMakeFiles/Chess.dir/ChessPiece.cpp.obj	a73efaadbc1c9968
+15	373	7287073527945801	CMakeFiles/Chess.dir/ChessSquare.cpp.obj	f59d9d6b85e2695c
+8	381	7287073528025830	CMakeFiles/Chess.dir/ChessPiece.cpp.obj	a73efaadbc1c9968
+3	375	7287074312782223	CMakeFiles/Chess.dir/ChessPiece.cpp.obj	a73efaadbc1c9968
+18	375	7287074312792252	CMakeFiles/Chess.dir/ChessSquare.cpp.obj	f59d9d6b85e2695c
+13	416	7287074313194729	CMakeFiles/Chess.dir/main.cpp.obj	bddd8afb012850b5
