@@ -6,7 +6,7 @@
 #include <utility>
 #include "ChessPiece.h"
 
-ChessPiece::ChessPiece(int color, ChessPieceType type, std::shared_ptr<Texture2D> texture) : color(color), texture(std::move(texture)) {
+ChessPiece::ChessPiece(int color, ChessPieceType type, Texture2D *texture) : color(color), texture(texture) {
     isSelected = false;
 }
 
